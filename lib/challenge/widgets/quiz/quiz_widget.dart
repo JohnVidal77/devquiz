@@ -1,10 +1,22 @@
 import 'package:DevQuiz/challenge/widgets/answer/answer_widget.dart';
 import 'package:DevQuiz/core/app_text_styles.dart';
+import 'package:DevQuiz/shared/models/answer_model.dart';
+import 'package:DevQuiz/shared/models/question_model.dart';
 import 'package:flutter/material.dart';
 
-class QuizWidget extends StatelessWidget {
-  final String title;
-  const QuizWidget({Key? key, required this.title}) : super(key: key);
+class QuizWidget extends StatefulWidget {
+  final QuestionModel question;
+  final ValueChanged<bool> onSelected;
+  const QuizWidget({Key? key, required this.question, required this.onSelected})
+      : super(key: key);
+
+  @override
+  _QuizWidgetState createState() => _QuizWidgetState();
+}
+
+class _QuizWidgetState extends State<QuizWidget> {
+  int? selectedIndex;
+  AnswerModel answer(int index) => widget.question.answers[index];
 
   @override
   Widget build(BuildContext context) {
@@ -14,18 +26,25 @@ class QuizWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(title, style: AppTextStyles.heading),
+            SizedBox(
+              height: 64,
+            ),
+            Text(widget.question.title, style: AppTextStyles.heading),
             SizedBox(
               height: 24,
             ),
-            AnswerWidget(
-              title: "Kit de desenvolvimento de interface de usuário",
-            ),
-            AnswerWidget(
-              isSelected: true,
-              isRight: true,
-              title: "Kit de desenvolvimento de interface de usuário",
-            )
+            for (var i = 0; i < widget.question.answers.length; i++)
+              AnswerWidget(
+                answer: answer(i),
+                disabled: selectedIndex != null,
+                isSelected: selectedIndex == i,
+                onTap: (value) {
+                  selectedIndex = i;
+                  setState(() {});
+                  Future.delayed(Duration(seconds: 1))
+                      .then((_) => widget.onSelected(value));
+                },
+              )
           ],
         ),
       ),

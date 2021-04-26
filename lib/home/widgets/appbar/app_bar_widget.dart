@@ -1,10 +1,12 @@
 import 'package:DevQuiz/core/app_gradients.dart';
 import 'package:DevQuiz/core/core.dart';
 import 'package:DevQuiz/home/widgets/score_card/score_card_widget.dart';
+import 'package:DevQuiz/shared/models/user_model.dart';
 import "package:flutter/material.dart";
 
 class AppBarWidget extends PreferredSize {
-  AppBarWidget()
+  final UserModel user;
+  AppBarWidget({required this.user})
       : super(
           preferredSize: Size.fromHeight(250),
           child: Container(
@@ -24,7 +26,8 @@ class AppBarWidget extends PreferredSize {
                           style: AppTextStyles.title,
                           children: [
                             TextSpan(
-                                text: "João", style: AppTextStyles.titleBold),
+                                text: user.name,
+                                style: AppTextStyles.titleBold),
                           ],
                         ),
                       ),
@@ -32,17 +35,20 @@ class AppBarWidget extends PreferredSize {
                         height: 58,
                         width: 58,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://avatars.githubusercontent.com/u/15021333?v=4"))),
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: NetworkImage(user.photo),
+                          ),
+                        ),
                       )
                     ],
                   ),
                 ),
                 Align(
                   alignment: Alignment(0, 1),
-                  child: ScoreCardWidget(),
+                  child: ScoreCardWidget(
+                    percent: user.score / 100,
+                  ),
                 ),
               ],
             ),
